@@ -1,16 +1,20 @@
 pipeline {
-    agent any
-    stages {
-        
-        stage('OWASP DependencyCheck') {
-			steps {
-				echo"Doing OWASP Dependency Check.."
-				dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'OWASPCheck'
-			}
-		}
+  agent any
+  stages {
+    stage('Checkout SCM') {
+      steps {
+        git 'https://github.com/yuanhan123/food-ordering-system'
+      }
     }
-    post {
-    always {
+
+    stage('OWASP DependencyCheck') {
+      steps {
+        dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'OWASPCheck'
+      }
+    }
+  }
+  post {
+    success {
       dependencyCheckPublisher pattern: 'dependency-check-report.xml'
     }
   }
